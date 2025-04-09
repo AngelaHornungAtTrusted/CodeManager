@@ -49,6 +49,44 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 				)
 			);
 		}
+	} elseif ($_POST["cm-post-type"] == "3") {
+		try{
+			$dbTableManager->updateWinnerStatus($_POST["cm-code-id"], $_POST["cm-code-winner"]);
+
+			$response = array(
+				'data' => array(
+					'success'  => 'success',
+					'message'  => 'Code Updated!',
+				)
+			);
+		}catch(\Exception $e){
+			//todo exceptions not caught or returned, fix later
+			$response = array(
+				'data' => array(
+					'success'  => 'error',
+					'message'  => $e->getMessage(),
+				)
+			);
+		}
+	} elseif ($_POST["cm-post-type"] == "4") {
+		try{
+			$dbTableManager->updateCodeMessage($_POST["cm-code-id"], $_POST["cm-code-message"]);
+
+			$response = array(
+				'data' => array(
+					'success'  => 'success',
+					'message'  => 'Code Updated!',
+				)
+			);
+		}catch(\Exception $e){
+			//todo exceptions not caught or returned, fix later
+			$response = array(
+				'data' => array(
+					'success'  => 'error',
+					'message'  => $e->getMessage(),
+				)
+			);
+		}
 	} else {
 		/* insert new code */
 		try {
@@ -81,7 +119,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 		$response = array(
 			'data' => array(
 				'success'  => 'success',
-				'message'  => 'Categories Acquired!',
+				'message'  => 'Codes Acquired!',
 				'content' => $dbTableManager->getCode() // Renamed the inner 'data' key
 			)
 		);

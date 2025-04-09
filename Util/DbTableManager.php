@@ -111,11 +111,33 @@ class DbTableManager {
 		);
 	}
 
+	function updateWinnerStatus($codeId, $checked): void {
+		$this->dpdb->update(
+			'cm_codes',
+			array(
+				'winner'      => ($checked === "true" ? 1 : 0),
+				'update_date' => gmdate( 'Y-m-d H:i:s' )
+			),
+			array('id' => $codeId)
+		);
+	}
+
 	public function updateCode($codeId, $code): void {
 		$this->dpdb->update(
 			'cm_codes',
 			array(
 				'code'        => $code,
+				'update_date' => gmdate( 'Y-m-d H:i:s' )
+			),
+			array('id' => $codeId)
+		);
+	}
+
+	public function updateCodeMessage($codeId, $message): void {
+		$this->dpdb->update(
+			'cm_codes',
+			array(
+				'message'        => $message,
 				'update_date' => gmdate( 'Y-m-d H:i:s' )
 			),
 			array('id' => $codeId)

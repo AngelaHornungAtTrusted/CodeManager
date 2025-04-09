@@ -24,9 +24,13 @@
                 }).done(function (response) {
                     //check if winner or loser
                     if (response.data.content != null) {
-                       toastr.success('You Won!');
+                        if (parseInt(response.data.content.winner) === 1) {
+                            toastr.success(response.data.content.message);
+                        } else {
+                            toastr.error(response.data.content.message);
+                        }
                    } else {
-                       toastr.error('You Lost!');
+                       toastr.error('Invalid Code');
                    }
                 }).fail(function () {
                     toastr.error('Unknown Error');

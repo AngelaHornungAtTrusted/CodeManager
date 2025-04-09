@@ -30,8 +30,10 @@
             <thead>
             <tr>
                 <th scope="col">Code</th>
+                <th scope="col">Message</th>
                 <th scope="col">Active</th>
-                <th scope="col">Manage</th>
+                <th scope="col">Winner</th>
+                <!--<th scope="col">Manage</th>-->
             </tr>
             </thead>
 			<?php //todo get rid of hard coded address ?>
