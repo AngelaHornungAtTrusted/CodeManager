@@ -75,14 +75,14 @@ class DbTableManager {
 		$wpdb->query( "DROP TABLE IF EXISTS cm_codes" );
 	}
 
-	function insertCode($code): void {
+	function insertCode($code, $message = null, $active = null, $winner = null): void {
 		$this->dpdb->insert(
 			'cm_codes',
 			array(
 				'code'        => $code,
-				'message'     => "No Win",
-				'active'      => 1,
-				'winner'      => 0,
+				'message'     => ($message !== null) ? $message : 'Loser',
+				'active'      => ($active === null) ? 1 : $active,
+				'winner'      => ($winner === null) ? 0 : $winner,
 				'create_date' => gmdate( 'Y-m-d H:i:s' ),
 				'update_date' => gmdate( 'Y-m-d H:i:s' )
 			)

@@ -90,8 +90,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 	} else {
 		/* insert new code */
 		try {
-			$catName = $_POST['cm-code'];
-			$dbTableManager->insertCode($_POST['cm-code']);
+			$dbTableManager->insertCode($_POST['cm-code'], ($_POST['cm-code-message'] ?? null), ($_POST['cm-code-active'] ?? null), ($_POST['cm-code-winner'] ?? null));
 
 			$response = array(
 				'data' => array(

@@ -1,6 +1,6 @@
 (function($) {
 
-    let $cForm, $dForm, $cTable, $dTable;
+    let $cForm, $dForm, $cTable, $dTable, $dFile;
     let checked, wChecked, catId;
 
     const pageInit = function() {
@@ -11,13 +11,14 @@
         //elements
         $cTable = $('#cm-code-table');
         $dTable = $('#dp-doc-table');
+        $dFile = $('#dp-doc-upload');
 
         //grab categories (grab docs after we have categories as those depend on the categories)
         grabCodes();
 
         //call form handlers
         handleCodeForm();
-        //handleDocumentForm();
+        handleDocumentForm();
     }
 
     const grabCodes = function () {
@@ -28,7 +29,6 @@
             type: 'GET',
             data: {},
         }).done(function (response) {
-            console.log(response);
             if (response.data.success === 'success') {
                 toastr.success(response.data.message);
                 codeTableInit(response.data.content);
@@ -176,31 +176,47 @@
     }
 
     const handleDocumentForm = function() {
-        $dForm.validate({
-            focusInvalid: false,
-            rules: {},
-            message: {},
+        $dFile.on('change', function(e) {
+            if (this.files) {
+                var myFile = this.files[0];
+                var reader = new FileReader();
 
-            submitHandler: function (f, e) {
-                e.preventDefault();
-                let validator = this;
-                let promise = $.ajax({
-                    url: $cForm.prop('action'),
-                    type: 'post',
-                    data: $cForm.serializeObject(),
-                }).done(function (response) {
-                    if (response.data.success === 'success') {
-                        toastr.success(response.data.message);
-                        grabCategories();
-                    } else {
-                        toastr.error(response.data.message);
-                    }
-                }).fail(function () {
-                    toastr.error('Unknown Error');
-                }).always(function () {
-                    $cForm.children('input').val('');
+                reader.addEventListener('load', function(e){
+                    let csvData = e.target.result;
+                    //console.log(csvData);
+                    let data = csvData.split('\n');
+                    $.each(data, function(key, value) {
+                        //0 key is file banner
+                        if (key > 0) {
+                            console.log(value.split(','));
+                            let vars = value.split(',');
+                            //upload code
+                            let promise = $.ajax({
+                                url: $cTable.data('loader'),
+                                type: 'POST',
+                                data: {
+                                    'cm-code': vars[0],
+                                    'cm-code-message': vars[1],
+                                    'cm-code-active': parseInt(vars[2]),
+                                    'cm-code-winner': parseInt(vars[3]),
+                                    'cm-post-type':0            //0 is for new category, 1 is to update, 2 is for title, 3 is for winner and 4 is for title
+                                },
+                            }).done(function (response) {
+                                if (response.data.success === 'success') {
+                                    toastr.success(response.data.message);
+                                    grabCodes();
+                                } else {
+                                    toastr.error(response.data.message);
+                                }
+                            }).always(function (response, s, r) {
+                            });
+                        }
+                    });
                 });
+
+                reader.readAsText(myFile);
             }
+            $dForm.children('input').val('');
         });
     }
 

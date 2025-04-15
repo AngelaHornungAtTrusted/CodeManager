@@ -57,7 +57,7 @@ function cm_page_content(): void {
 }
 
 //exports table data, called by export button
-function cm_export_data(): void {
+function cm_export_action(): void {
 	try{
 		global $wpdb;
 
@@ -88,7 +88,7 @@ function cm_enqueue_admin_scripts($hook): void {
 	    wp_localize_script('my-plugin-admin-script', 'my_plugin_vars', array(
 		    'nonce' => wp_create_nonce('my_plugin_custom_action'),
 		    'action' => 'my_plugin_custom_action',
-		    'export_url' => admin_url('admin-post.php?action=dp_export_action') // Add the URL here
+		    'export_url' => admin_url('admin-post.php?action=cm_export_action') // Add the URL here
 	    ));
 	}
 }
