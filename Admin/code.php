@@ -87,10 +87,29 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 				)
 			);
 		}
+	} elseif ($_POST["cm-post-type"] == "5") {
+		try{
+			$dbTableManager->updateCodeExpiration($_POST["cm-code-id"], $_POST["cm-code-expiration"]);
+
+			$response = array(
+				'data' => array(
+					'success'  => 'success',
+					'message'  => 'Code Updated!',
+				)
+			);
+		}catch(\Exception $e){
+			//todo exceptions not caught or returned, fix later
+			$response = array(
+				'data' => array(
+					'success'  => 'error',
+					'message'  => $e->getMessage(),
+				)
+			);
+		}
 	} else {
 		/* insert new code */
 		try {
-			$dbTableManager->insertCode($_POST['cm-code'], ($_POST['cm-code-message'] ?? null), ($_POST['cm-code-active'] ?? null), ($_POST['cm-code-winner'] ?? null));
+			$dbTableManager->insertCode($_POST['cm-code'], ($_POST['cm-code-message'] ?? null), ($_POST['cm-code-active'] ?? null), ($_POST['cm-code-winner'] ?? null), ($_POST['cm-code-exp'] ?? null));
 
 			$response = array(
 				'data' => array(
@@ -119,7 +138,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 			'data' => array(
 				'success'  => 'success',
 				'message'  => 'Codes Acquired!',
-				'content' => $dbTableManager->getCode() // Renamed the inner 'data' key
+				'content' => $dbTableManager->getCode()
 			)
 		);
 	} catch ( \Exception $e ) {

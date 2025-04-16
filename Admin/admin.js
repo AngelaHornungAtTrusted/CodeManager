@@ -19,17 +19,23 @@
         //call form handlers
         handleCodeForm();
         handleDocumentForm();
+
+        //call events
+        codeActiveWatch();
+        codeWinnerWatch();
+        codeInputWatch();
+        codeMessageWatch();
+        codeExpirationWatch();
     }
 
     const grabCodes = function () {
-        //clear table
-        $cTable[0].innerHTML="";
         let promise = $.ajax({
             url: $cTable.data('loader'),
             type: 'GET',
             data: {},
         }).done(function (response) {
             if (response.data.success === 'success') {
+                console.log(response);
                 toastr.success(response.data.message);
                 codeTableInit(response.data.content);
             } else {
@@ -40,7 +46,10 @@
     }
 
     const codeTableInit = function (codes) {
+        //clear table
+        $cTable[0].innerHTML="";
         $.each(codes, function (key, code) {
+            console.log(code);
             checked = code.active === '1' ? 'checked' : '';
             wChecked = code.winner === '1' ? 'checked' : '';
             $cTable.append('' +
@@ -49,13 +58,9 @@
                 '<td><input class="cm-code-message" id="code-message-' + code.id + '" type="text" value="' + code.message + '"></td>' +
                 '<td><input class="cm-code-checkbox" type="checkbox" id="code-check-' + code.id + '" value="' + code.id + '" ' + checked + '></td>' +
                 '<td><input class="cm-code-winner-checkbox" type="checkbox" id="code-winner-check-' + code.id + '" value="' + code.id + '" ' + wChecked + '> </td>' +
+                '<td><input class="cm-code-expiration" type="date" id="cm-code-expiration-' + code.id + '"></td>' +
                 '</tr>');
         });
-
-        codeActiveWatch();
-        codeWinnerWatch();
-        codeInputWatch();
-        codeMessageWatch();
     }
 
     const codeActiveWatch = function () {
@@ -146,6 +151,29 @@
         });
     }
 
+    const codeExpirationWatch = function () {
+        $('.cm-code-expiration').on('change', function(e){
+            catId = e.currentTarget.id;
+
+            let promise = $.ajax({
+                url: $cTable.data('loader'),
+                type: 'POST',
+                data: {
+                    'cm-code-id':catId.split('-')[2],
+                    'cm-code-expiration':e.currentTarget.value,
+                    'cm-post-type':5            //0 is for new category, 1 is to update, 2 is for title, 3 is for winner, 4 is for title and 5 is for date
+                },
+            }).done(function (response) {
+                if (response.data.success === 'success') {
+                    toastr.success(response.data.message);
+                } else {
+                    toastr.error(response.data.message);
+                }
+            }).always(function (response, s, r) {
+            });
+        });
+    }
+
     const handleCodeForm = function() {
         $cForm.validate({
             focusInvalid: false,
@@ -188,7 +216,6 @@
                     $.each(data, function(key, value) {
                         //0 key is file banner
                         if (key > 0) {
-                            console.log(value.split(','));
                             let vars = value.split(',');
                             //upload code
                             let promise = $.ajax({
@@ -199,12 +226,12 @@
                                     'cm-code-message': vars[1],
                                     'cm-code-active': parseInt(vars[2]),
                                     'cm-code-winner': parseInt(vars[3]),
+                                    'cm-code-expiration': vars[4],
                                     'cm-post-type':0            //0 is for new category, 1 is to update, 2 is for title, 3 is for winner and 4 is for title
                                 },
                             }).done(function (response) {
                                 if (response.data.success === 'success') {
                                     toastr.success(response.data.message);
-                                    grabCodes();
                                 } else {
                                     toastr.error(response.data.message);
                                 }
@@ -213,10 +240,10 @@
                         }
                     });
                 });
-
                 reader.readAsText(myFile);
             }
             $dForm.children('input').val('');
+            grabCodes();
         });
     }
 

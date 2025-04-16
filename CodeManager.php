@@ -4,15 +4,12 @@
  * Description: Code/lottery manager
  * Version: 1.0
  * Requires at least: 5.2
- * Requires PHP: 8.2.0
+ * Requires PHP: 8.0.0
  * Author: Angela Hornung
  * Prefix: cm
  */
 
 /* variables & objects */
-
-use Util\DbTableManager;
-
 require_once( __DIR__ . '/Util/DbTableManager.php');
 
 /* Plugin Activation & Installation Management Hooks */
@@ -47,8 +44,6 @@ function cm_menu(): void {
 }
 
 function cm_page_content(): void {
-    global $wpdb;
-    $dbTableManager = new DbTableManager($wpdb);
     ?>
     <div class="wrap">
 		<?php include( plugin_dir_path( __FILE__ ) . 'Admin/admin.php' ); ?>

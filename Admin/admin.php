@@ -1,13 +1,6 @@
 <?php
-/*
- * Dynamic calling
- * CSV uploading
- * Custom CSV sheet
- * Complete CSV uploading (dealing with bug)
- * Deactivation date
- */
-
 global $wp;
+//echo home_url($wp->request) . '/wp-content/plugins/CodeManager/Admin/
 ?>
 <h2>Code Administration</h2>
 <div class="row">
@@ -15,7 +8,7 @@ global $wp;
         <!-- http://localhost/devplugin/wp-content/plugins/CodeManager/Admin/code.php -->
         <h5>Document Category Management</h5>
 	    <?php //todo get rid of hard coded address, did when tired, dynamic call tries to include mamp in the address (composer autoloader?) ?>
-        <form id="cm-code-form" action="<?php echo home_url($wp->request) . '/wp-content/plugins/CodeManager/Admin/code.php';?>" method="post">
+        <form id="cm-code-form" action="<?php echo home_url($wp->request) . '/wp-content/plugins/CodeManager/Admin/code.php'; ?>" method="post">
             <label class="hidden" for="cm-code">Category Name</label>
             <input type="text" id="cm-code" name="cm-code">
             <label class="hidden" for="cm-post-type">Input Type</label>
@@ -40,11 +33,12 @@ global $wp;
                 <th scope="col">Message</th>
                 <th scope="col">Active</th>
                 <th scope="col">Winner</th>
-                <!--<th scope="col">Manage</th>-->
+                <th scope="col">Expiration</th>
             </tr>
             </thead>
 			<?php //todo get rid of hard coded address ?>
-            <tbody id="cm-code-table" data-loader="http://localhost/devplugin/wp-content/plugins/CodeManager/Admin/code.php"></tbody>
+            <!-- http://localhost/devplugin/wp-content/plugins/CodeManager/Admin/code.php" -->
+            <tbody id="cm-code-table" data-loader="<?php echo home_url($wp->request) . '/wp-content/plugins/CodeManager/Admin/code.php'; ?>"></tbody>
         </table>
     </div>
 </div>
