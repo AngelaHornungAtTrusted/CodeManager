@@ -10,7 +10,8 @@
  */
 
 /* variables & objects */
-require_once( __DIR__ . '/Util/DbTableManager.php');
+use Util\DbTableManager;
+require( __DIR__ . '/Util/DbTableManager.php');
 
 /* Plugin Activation & Installation Management Hooks */
 register_activation_hook(__FILE__, 'cm_activate');
@@ -67,7 +68,6 @@ function cm_export_action(): void {
 
 //sets up export url for export button and admin.js
 function cm_enqueue_admin_scripts($hook): void {
-
 	wp_enqueue_script('your-plugin-admin-script', plugin_dir_url( __FILE__ ) . 'Admin/admin.js', array( 'jquery' ), '1.0', false);
 
     wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"');

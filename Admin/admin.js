@@ -19,13 +19,6 @@
         //call form handlers
         handleCodeForm();
         handleDocumentForm();
-
-        //call events
-        codeActiveWatch();
-        codeWinnerWatch();
-        codeInputWatch();
-        codeMessageWatch();
-        codeExpirationWatch();
     }
 
     const grabCodes = function () {
@@ -35,7 +28,6 @@
             data: {},
         }).done(function (response) {
             if (response.data.success === 'success') {
-                console.log(response);
                 toastr.success(response.data.message);
                 codeTableInit(response.data.content);
             } else {
@@ -58,12 +50,20 @@
                 '<td><input class="cm-code-message" id="code-message-' + code.id + '" type="text" value="' + code.message + '"></td>' +
                 '<td><input class="cm-code-checkbox" type="checkbox" id="code-check-' + code.id + '" value="' + code.id + '" ' + checked + '></td>' +
                 '<td><input class="cm-code-winner-checkbox" type="checkbox" id="code-winner-check-' + code.id + '" value="' + code.id + '" ' + wChecked + '> </td>' +
-                '<td><input class="cm-code-expiration" type="date" id="cm-code-expiration-' + code.id + '"></td>' +
+                '<td><input class="cm-code-expiration" type="datetime-local" id="cm-code-expiration-' + code.id + '" value="' + code.expiration + '"></td>' +
                 '</tr>');
         });
+
+        //call events
+        codeActiveWatch();
+        codeWinnerWatch();
+        codeInputWatch();
+        codeMessageWatch();
+        codeExpirationWatch();
     }
 
     const codeActiveWatch = function () {
+        $('.cm-code-checkbox').off('click');
         $('.cm-code-checkbox').on('click', function(e){
             let promise = $.ajax({
                 url: $cTable.data('loader'),
@@ -85,6 +85,7 @@
     }
 
     const codeWinnerWatch = function () {
+        $('.cm-code-winner-checkbox').off('click');
         $('.cm-code-winner-checkbox').on('click', function(e){
             let promise = $.ajax({
                 url: $cTable.data('loader'),
@@ -106,6 +107,7 @@
     }
 
     const codeInputWatch = function () {
+        $('.cm-code-title').off('change');
         $('.cm-code-title').on('change', function(e){
             catId = e.currentTarget.id;
 
@@ -129,6 +131,7 @@
     }
 
     const codeMessageWatch = function () {
+        $('.cm-code-message').off('change');
         $('.cm-code-message').on('change', function(e){
             catId = e.currentTarget.id;
 
@@ -152,6 +155,7 @@
     }
 
     const codeExpirationWatch = function () {
+        $('.cm-code-expiration').off('change');
         $('.cm-code-expiration').on('change', function(e){
             catId = e.currentTarget.id;
 

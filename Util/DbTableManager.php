@@ -147,10 +147,13 @@ class DbTableManager {
 	}
 
 	public function updateCodeExpiration($codeId, $exp): void {
+		//var_dump(date('Y-M-d H:i:s',strtotime($exp)));
+		//die();
+
 		$this->dpdb->update(
 			'cm_codes',
 			array(
-				'expiration'        => $exp,
+				'expiration'  => date('Y-M-d H:i:s',strtotime($exp)),
 				'update_date' => gmdate( 'Y-m-d H:i:s' )
 			),
 			array('id' => $codeId)
