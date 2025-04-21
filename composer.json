@@ -1,0 +1,19 @@
+{
+  "name": "trustedtechnologies/codemanager",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "autoload": {
+    "psr-4": {
+      "Util\\": "Util/"
+    }
+  },
+  "authors": [
+    {
+      "name": "aajh",
+      "email": "angela@trustedtechsupport.com"
+    }
+  ],
+  "require": {
+  }
+}

@@ -97,7 +97,7 @@ class DbTableManager {
 			return $this->dpdb->get_results("SELECT * FROM cm_codes");
 		} else {
 			//grab specific
-			return $this->dpdb->get_row("SELECT * FROM cm_codes WHERE code = '$code' AND active = 1 AND expiration < NOW()");
+			return $this->dpdb->get_row("SELECT * FROM cm_codes WHERE code = '$code' AND active = 1 AND expiration > NOW()");
 		}
 	}
 

@@ -10,8 +10,8 @@
  */
 
 /* variables & objects */
+require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 use Util\DbTableManager;
-require( __DIR__ . '/Util/DbTableManager.php');
 
 /* Plugin Activation & Installation Management Hooks */
 register_activation_hook(__FILE__, 'cm_activate');
@@ -70,8 +70,11 @@ function cm_export_action(): void {
 function cm_enqueue_admin_scripts($hook): void {
 	wp_enqueue_script('your-plugin-admin-script', plugin_dir_url( __FILE__ ) . 'Admin/admin.js', array( 'jquery' ), '1.0', false);
 
-    wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"');
-    wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"');
+    //wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"');
+    //wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"');
+
+	wp_enqueue_script('jquery.validate', plugin_dir_url( __FILE__ ) . 'Assets/validate/jquery.validate.min.js"');
+	wp_enqueue_script('jquery.validate', plugin_dir_url( __FILE__ ) . 'Assets/validate/additional-methods.min.js"');
 	wp_enqueue_style('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
 	wp_enqueue_script('toastr', plugin_dir_url( __FILE__ ) . 'Assets/toastr/toastr.js', array('jquery'));
     wp_enqueue_style('toastr', plugin_dir_url( __FILE__ ) . 'Assets/toastr/build/toastr.css');

@@ -1,8 +1,11 @@
 (function($) {
 
     let $cForm;
+    const plugin_url = `${window.location.origin}/wp-content/plugins/CodeManager/Shortcode/code.php`;
 
     const pageInit = function() {
+        console.log(plugin_url);
+
         $cForm = $('#code-check-form');
 
         handleCodeForm();
@@ -15,14 +18,16 @@
             message: {},
 
             submitHandler: function (f, e) {
+                console.log($cForm.prop('action'));
                 e.preventDefault();
                 let validator = this;
                 let promise = $.ajax({
-                    url: $cForm.prop('action'),
+                    url: plugin_url,
                     type: 'get',
                     data: $cForm.serializeObject(),
                 }).done(function (response) {
                     //check if winner or loser
+                    console.log(response);
                     if (response.data.content != null) {
                         if (parseInt(response.data.content.winner) === 1) {
                             toastr.success(response.data.content.message);
