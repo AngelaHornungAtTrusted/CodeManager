@@ -122,6 +122,7 @@ function cmanager_shortcode( $atts = [], $content = null): void {
 	global $wpdb;
 	$dbTableManager = new DbTableManager($wpdb);
 
+    wp_enqueue_script('popup', plugin_dir_url( __FILE__ ) . 'Assets/popup/popup.js', array('jquery'));
 	wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"');
 	wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"');
 	wp_enqueue_script('toastr', plugin_dir_url( __FILE__ ) . 'Assets/toastr/toastr.js', array('jquery'));

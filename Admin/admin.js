@@ -41,7 +41,7 @@
         //clear table
         $cTable[0].innerHTML="";
         $.each(codes, function (key, code) {
-            console.log(code);
+            /*'<td><input class="cm-code-expiration" type="datetime-local" id="cm-code-expiration-' + code.id + '" value="' + code.expiration + '"></td>' +*/
             checked = code.active === '1' ? 'checked' : '';
             wChecked = code.winner === '1' ? 'checked' : '';
             $cTable.append('' +
@@ -50,7 +50,6 @@
                 '<td><input class="cm-code-message" id="code-message-' + code.id + '" type="text" value="' + code.message + '"></td>' +
                 '<td><input class="cm-code-checkbox" type="checkbox" id="code-check-' + code.id + '" value="' + code.id + '" ' + checked + '></td>' +
                 '<td><input class="cm-code-winner-checkbox" type="checkbox" id="code-winner-check-' + code.id + '" value="' + code.id + '" ' + wChecked + '> </td>' +
-                '<td><input class="cm-code-expiration" type="datetime-local" id="cm-code-expiration-' + code.id + '" value="' + code.expiration + '"></td>' +
                 '</tr>');
         });
 
