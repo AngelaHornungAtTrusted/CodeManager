@@ -20,14 +20,14 @@
                 e.preventDefault();
                 let validator = this;
                 let promise = $.ajax({
-                    url: plugin_url,
+                    url: $cForm.prop('action'),
                     type: 'get',
                     data: $cForm.serializeObject(),
                 }).done(function (response) {
                     if (response.data.content != null) {
                         myPopup = new Popup({
                             id: "popup",
-                            title: "Your Code Is A",
+                            title: "Code Result",
                             content: response.data.content.message,
                         });
                         myPopup.show();
