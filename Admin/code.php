@@ -12,7 +12,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 	if ($_POST["cm-post-type"] == "1") {
 		/* change code status */
 		try{
-			$dbTableManager->updateCodeStatus($_POST["cm-code-id"], $_POST["cm-code-status"]);
+			$dbTableManager->updateCodeStatus(sanitize_text_field($_POST["cm-code-id"]), sanitize_text_field($_POST["cm-code-status"]));
 
 			$response = array(
 				'data' => array(
@@ -32,7 +32,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 	} elseif ($_POST["cm-post-type"] == "2") {
 		/* change code */
 		try{
-			$dbTableManager->updateCode($_POST["cm-code-id"], $_POST["cm-code-title"]);
+			$dbTableManager->updateCode(sanitize_text_field($_POST["cm-code-id"]), sanitize_text_field($_POST["cm-code-title"]));
 
 			$response = array(
 				'data' => array(
@@ -51,7 +51,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 		}
 	} elseif ($_POST["cm-post-type"] == "3") {
 		try{
-			$dbTableManager->updateWinnerStatus($_POST["cm-code-id"], $_POST["cm-code-winner"]);
+			$dbTableManager->updateWinnerStatus(sanitize_text_field($_POST["cm-code-id"]), sanitize_text_field($_POST["cm-code-winner"]));
 
 			$response = array(
 				'data' => array(
@@ -70,7 +70,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 		}
 	} elseif ($_POST["cm-post-type"] == "4") {
 		try{
-			$dbTableManager->updateCodeMessage($_POST["cm-code-id"], $_POST["cm-code-message"]);
+			$dbTableManager->updateCodeMessage(sanitize_text_field($_POST["cm-code-id"]), sanitize_text_field($_POST["cm-code-message"]));
 
 			$response = array(
 				'data' => array(
@@ -89,7 +89,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 		}
 	} elseif ($_POST["cm-post-type"] == "5") {
 		try{
-			$dbTableManager->updateCodeExpiration($_POST["cm-code-id"], $_POST["cm-code-expiration"]);
+			$dbTableManager->updateCodeExpiration(sanitize_text_field($_POST["cm-code-id"]), sanitize_text_field($_POST["cm-code-expiration"]));
 
 			$response = array(
 				'data' => array(
@@ -109,7 +109,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST" ) {
 	} else {
 		/* insert new code */
 		try {
-			$dbTableManager->insertCode($_POST['cm-code'], ($_POST['cm-code-message'] ?? null), ($_POST['cm-code-active'] ?? null), ($_POST['cm-code-winner'] ?? null), ($_POST['cm-code-exp'] ?? null));
+			$dbTableManager->insertCode(sanitize_text_field($_POST['cm-code']), sanitize_text_field($_POST['cm-code-message'] ?? null), sanitize_text_field($_POST['cm-code-active'] ?? null), sanitize_text_field($_POST['cm-code-winner'] ?? null), sanitize_text_field($_POST['cm-code-exp'] ?? null));
 
 			$response = array(
 				'data' => array(

@@ -47,7 +47,8 @@
             $cTable.append('' +
                 '<tr>' +
                 '<td><input class="cm-code-title" id="code-title-' + code.id + '" type="text" value="' + code.code + '"></td>' +
-                '<td><input class="cm-code-message" id="code-message-' + code.id + '" type="text" value="' + code.message + '"></td>' +
+                '<td><input class="cm-code-message" id="code-message-' + code.id + '" type="text" value="' + code.message.replace(/\\(.)/mg, "$1") + '"></td>' +
+                '<td><input class="cm-code-expiration" id="code-expiration-' + code.id + '" type="datetime-local" value="' + code.expiration + '"></td>' +
                 '<td><input class="cm-code-checkbox" type="checkbox" id="code-check-' + code.id + '" value="' + code.id + '" ' + checked + '></td>' +
                 '<td><input class="cm-code-winner-checkbox" type="checkbox" id="code-winner-check-' + code.id + '" value="' + code.id + '" ' + wChecked + '> </td>' +
                 '</tr>');
@@ -230,7 +231,7 @@
                                     'cm-code-active': parseInt(vars[2]),
                                     'cm-code-winner': parseInt(vars[3]),
                                     'cm-code-expiration': vars[4],
-                                    'cm-post-type':0            //0 is for new category, 1 is to update, 2 is for title, 3 is for winner and 4 is for title
+                                    'cm-post-type':0            //0 is for new code, 1 is to update, 2 is for title, 3 is for winner and 4 is for title
                                 },
                             }).done(function (response) {
                                 if (response.data.success === 'success') {

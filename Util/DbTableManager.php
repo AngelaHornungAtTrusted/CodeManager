@@ -77,14 +77,16 @@ class DbTableManager {
 	}
 
 	function insertCode($code, $message = null, $active = null, $winner = null, $exp = null): void {
+
 		$this->dpdb->insert(
 			'cm_codes',
 			array(
 				'code'        => $code,
-				'message'     => ($message !== null) ? $message : 'Loser',
-				'active'      => ($active === null) ? 1 : $active,
-				'winner'      => ($winner === null) ? 0 : $winner,
-				'expiration'  => ($exp === null) ? gmdate('Y-m-d H:i:s', strtotime('+ 1 MONTH')) : $exp,
+				'message'     => ($message === "") ? 'Loser' : $message,
+				'active'      => ($active === "") ? 1 : $active,
+				'winner'      => ($winner === "") ? 0 : $winner,
+				'expiration'  => ($exp === "") ? gmdate('Y-m-d H:i:s', mktime(0,0,0,date("m", strtotime("+1 month")),1,date("Y"))) : $exp,
+                //'expiration'  => gmdate('Y-m-d H:i:s', mktime(0,0,0,date("m", strtotime("+1 month")),1,date("Y"))),
 				'create_date' => gmdate( 'Y-m-d H:i:s' ),
 				'update_date' => gmdate( 'Y-m-d H:i:s' )
 			)
@@ -97,7 +99,7 @@ class DbTableManager {
 			return $this->dpdb->get_results("SELECT * FROM cm_codes");
 		} else {
 			//grab specific
-			return $this->dpdb->get_row("SELECT * FROM cm_codes WHERE code = '$code' AND active = 1 AND expiration > NOW()");
+			return $this->dpdb->get_row("SELECT * FROM cm_codes WHERE code = '$code' AND active = 1");
 		}
 	}
 
@@ -146,16 +148,20 @@ class DbTableManager {
 		);
 	}
 
-	public function updateCodeExpiration($codeId, $exp): void {
-        //die(gmdate('Y-m-d H:i:s',strtotime($exp)));
-		$this->dpdb->update(
-			'cm_codes',
-			array(
-				'expiration'  => gmdate('Y-m-d H:i:s'),
-				'update_date' => gmdate( 'Y-m-d H:i:s' )
-			),
-			array('id' => $codeId)
-		);
+	public function updateCodeExpiration($codeId, $exp = null): void {
+        try {
+            $this->dpdb->update(
+                'cm_codes',
+                array(
+                    'expiration'  => ($exp != null) ? gmdate('Y-m-d H:i:s',strtotime($exp)) : gmdate('Y-m-d'),
+                    'update_date' => gmdate( 'Y-m-d H:i:s' )
+                ),
+                array('id' => $codeId)
+            );
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            die();
+        }
 	}
 }
 

@@ -4,9 +4,9 @@ global $wp;
 <h2>Code Administration</h2>
 <div class="row">
     <div class="col-md-6">
-        <h5>Document Category Management</h5>
+        <h5>Code Management</h5>
         <form id="cm-code-form" action="<?php echo home_url($wp->request) . '/wp-content/plugins/CodeManager/Admin/code.php'; ?>" method="post">
-            <label class="hidden" for="cm-code">Category Name</label>
+            <label class="hidden" for="cm-code">Code</label>
             <input type="text" id="cm-code" name="cm-code">
             <label class="hidden" for="cm-post-type">Input Type</label>
             <input type="number" class="hidden" id="cm-post-type" name="cm-post-type" value="0">
@@ -28,9 +28,9 @@ global $wp;
             <tr>
                 <th scope="col">Code</th>
                 <th scope="col">Message</th>
+                <th scope="col">Expiration</th>
                 <th scope="col">Active</th>
                 <th scope="col">Winner</th>
-                <!--<th scope="col">Expiration</th>-->
             </tr>
             </thead>
             <tbody id="cm-code-table" data-loader="<?php echo home_url($wp->request) . '/wp-content/plugins/CodeManager/Admin/code.php'; ?>"></tbody>
