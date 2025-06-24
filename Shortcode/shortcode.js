@@ -2,76 +2,36 @@
 
     let $cForm;
     let myPopup;
-    const plugin_url = `${window.location.origin}/wp-content/plugins/CodeManager/Shortcode/code.php`;
 
     const pageInit = function () {
         $cForm = $('#code-check-form');
 
-        handleCodeForm();
+        $('#code-form-button').on('click', handleCodeForm);
     }
 
-    const handleCodeForm = function () {
-        $cForm.validate({
-            focusInvalid: false,
-            rules: {},
-            message: {},
+    const handleCodeForm = function (e) {
+        e.preventDefault();
 
-            submitHandler: function (f, e) {
-                e.preventDefault();
-                let validator = this;
-                let promise = $.ajax({
-                    url: $cForm.prop('action'),
-                    type: 'get',
-                    data: $cForm.serializeObject(),
-                }).done(function (response) {
-                    if (response.data.content != null) {
-                        //not great implementation but couldn't get SQL to do it so we check here
-                        if (new Date(response.data.content.expiration) <= new Date()) {
-                            myPopup = new Popup({
-                                id: "popup",
-                                title: "Code Result",
-                                content: "Code Expired!",
-                            });
-                        } else {
-                            myPopup = new Popup({
-                                id: "popup",
-                                title: "Code Result",
-                                content: response.data.content.message,
-                            });
-
-                            console.log(response.data.content.id);
-                            console.log(response.data.content.active);
-
-                            //expireCode(response.data.content.id);
-                        }
-                        myPopup.show();
-                    } else {
-                        toastr.error('Invalid Code');
-                    }
-                }).fail(function () {
-                    toastr.error('Unknown Error');
-                }).always(function () {
-                    $cForm.children('input').val('');
-                })
-            }
-        })
-    }
-
-    const expireCode = function (code, active) {
-        let promise = $.ajax({
-            url: $cForm.prop('action'),
-            type: 'POST',
-            data: {
-                'cm-code-id': code,
-            },
-        }).done(function (response) {
-            if (response.data.success === 'success') {
-                toastr.success(response.data.message);
+        $.post(CM_AJAX_URL, {
+            action: 'cm_code_exists',
+            code: $cForm.serializeObject()
+        }, function(response){
+            if (response.status === 'success') {
+                handlePopUp(response.data);
             } else {
-                toastr.error(response.data.message);
+                toastr.error(response.message);
             }
-        }).always(function (response, s, r) {
         });
+    }
+
+    const handlePopUp = function(code) {
+        myPopup = new Popup({
+            id: "popup",
+            title: "Code Result",
+            content: (code.length > 0) ? code[0].message : 'No Code Found',
+        });
+
+        myPopup.show();
     }
 
     $(document).ready(function () {

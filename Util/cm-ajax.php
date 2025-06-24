@@ -184,3 +184,39 @@ function wp_ajax_cm_delete_code() {
 
     wp_send_json($response);
 }
+
+//for shortcode
+function wp_ajax_cm_code_exists() {
+    global $wpdb;
+    $response = new stdClass();
+
+    if (!isset($_POST["code"]["code"])) {
+        $response->code = 400;
+        $response->status = 'error';
+        $response->message = 'Missing Required Fields';
+
+        wp_send_json($response);
+    }
+
+    $code = sanitize_text_field($_POST["code"]["code"]);
+
+    try{
+        $data = $wpdb->get_results("SELECT * FROM ".CM_TABLE_CODES." WHERE code = '" . $code . "' AND active = 1");
+
+        //if expired override code message
+        if (count($data) > 0) {
+            $data[0]->message = (gmdate($data[0]->expiration) <= gmdate('Y-m-d H:i:s')) ?  'Code Expired!' : $data[0]->message;
+        }
+
+        $response->code = 200;
+        $response->status = 'success';
+        $response->message = (count($data) > 0) ? 'Code Exists!' : 'No Code Found!';
+        $response->data = $data;
+    } catch (Exception $e) {
+        $response->code = 400;
+        $response->status = 'error';
+        $response->message = $e->getMessage();
+    }
+
+    wp_send_json($response);
+}

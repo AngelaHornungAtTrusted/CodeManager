@@ -32,6 +32,7 @@ add_action('wp_ajax_cm_new_code', 'wp_ajax_cm_new_code');
 add_action('wp_ajax_cm_update_code', 'wp_ajax_cm_update_code');
 add_action('wp_ajax_cm_get_codes', 'wp_ajax_cm_get_codes');
 add_action('wp_ajax_cm_delete_code', 'wp_ajax_cm_delete_code');
+add_action('wp_ajax_cm_code_exists', 'wp_ajax_cm_code_exists');
 
 function cm_activate(): void {
 	try{

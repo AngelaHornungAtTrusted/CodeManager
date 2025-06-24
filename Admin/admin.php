@@ -1,5 +1,5 @@
 <?php
-//global $wp;
+//TODO implement settings such as automatic code expiration and associated settings table
 ?>
 <script>
     //Wordpress admin ajax controller
