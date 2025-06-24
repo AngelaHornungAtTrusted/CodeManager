@@ -1,9 +1,9 @@
-(function($) {
+(function ($) {
 
     let $cForm, $dForm, $cTable, $dTable, $dFile;
-    let checked, wChecked, catId;
+    let checked, wChecked, codeId;
 
-    const pageInit = function() {
+    const pageInit = function () {
         //forms
         $cForm = $('#cm-code-form');
         $dForm = $('#cm-doc-form');
@@ -13,35 +13,32 @@
         $dTable = $('#dp-doc-table');
         $dFile = $('#dp-doc-upload');
 
-        //grab categories (grab docs after we have categories as those depend on the categories)
+        //init method
         grabCodes();
 
         //call form handlers
-        handleCodeForm();
+        $('#cm-code-submit').on('click', handleCodeForm);
         handleDocumentForm();
     }
 
     const grabCodes = function () {
-        let promise = $.ajax({
-            url: $cTable.data('loader'),
-            type: 'GET',
-            data: {},
-        }).done(function (response) {
-            if (response.data.success === 'success') {
-                toastr.success(response.data.message);
-                codeTableInit(response.data.content);
-            } else {
-                toastr.error(response.data.message);
+        $.get(CM_AJAX_URL, {
+                action: "cm_get_codes",
+            }, function (response) {
+                if (response.status === 'success') {
+                    toastr.success(response.message);
+                    codeTableInit(response.data);
+                } else {
+                    toastr.error(response.message);
+                }
             }
-        }).always(function (response, s, r) {
-        });
+        );
     }
 
     const codeTableInit = function (codes) {
         //clear table
-        $cTable[0].innerHTML="";
+        $cTable[0].innerHTML = "";
         $.each(codes, function (key, code) {
-            /*'<td><input class="cm-code-expiration" type="datetime-local" id="cm-code-expiration-' + code.id + '" value="' + code.expiration + '"></td>' +*/
             checked = code.active === '1' ? 'checked' : '';
             wChecked = code.winner === '1' ? 'checked' : '';
             $cTable.append('' +
@@ -49,197 +46,107 @@
                 '<td><input class="cm-code-title" id="code-title-' + code.id + '" type="text" value="' + code.code + '"></td>' +
                 '<td><input class="cm-code-message" id="code-message-' + code.id + '" type="text" value="' + code.message.replace(/\\(.)/mg, "$1") + '"></td>' +
                 '<td><input class="cm-code-expiration" id="code-expiration-' + code.id + '" type="datetime-local" value="' + code.expiration + '"></td>' +
-                '<td><input class="cm-code-checkbox" type="checkbox" id="code-check-' + code.id + '" value="' + code.id + '" ' + checked + '></td>' +
-                '<td><input class="cm-code-winner-checkbox" type="checkbox" id="code-winner-check-' + code.id + '" value="' + code.id + '" ' + wChecked + '> </td>' +
+                '<td><input class="cm-code-checkbox" type="checkbox" id="code-active-' + code.id + '" value="' + code.id + '" ' + checked + '></td>' +
+                '<td><input class="cm-code-winner-checkbox" type="checkbox" id="code-winner-' + code.id + '" value="' + code.id + '" ' + wChecked + '> </td>' +
+                '<td><a class="cm-code-delete btn btn-danger" id="code-delete-' + code.id + '">Delete</a></td>' +
                 '</tr>');
         });
 
         //call events
-        codeActiveWatch();
-        codeWinnerWatch();
-        codeInputWatch();
-        codeMessageWatch();
-        codeExpirationWatch();
+        initPageActions();
     }
 
-    const codeActiveWatch = function () {
-        $('.cm-code-checkbox').off('click');
-        $('.cm-code-checkbox').on('click', function(e){
-            let promise = $.ajax({
-                url: $cTable.data('loader'),
-                type: 'POST',
-                data: {
-                    'cm-code-id':e.currentTarget.value,
-                    'cm-code-status':e.currentTarget.checked,
-                    'cm-post-type':1            //0 is for new category, 1 is to update activity, 2 is for title
-                },
-            }).done(function (response) {
-                if (response.data.success === 'success') {
-                    toastr.success(response.data.message);
-                } else {
-                    toastr.error(response.data.message);
-                }
-            }).always(function (response, s, r) {
-            });
-        });
+    const initPageActions = function () {
+        //set up triggers
+        $('.cm-code-title').off('change').on('change', updateCode);
+        $('.cm-code-checkbox').off('click').on('click', updateCode);
+        $('.cm-code-winner-checkbox').off('click').on('click', updateCode);
+        $('.cm-code-message').off('change').on('change', updateCode);
+        $('.cm-code-expiration').off('change').on('change', updateCode);
+        $('.cm-code-delete').off('click').on('click', deleteCode);
     }
 
-    const codeWinnerWatch = function () {
-        $('.cm-code-winner-checkbox').off('click');
-        $('.cm-code-winner-checkbox').on('click', function(e){
-            let promise = $.ajax({
-                url: $cTable.data('loader'),
-                type: 'POST',
-                data: {
-                    'cm-code-id':e.currentTarget.value,
-                    'cm-code-winner':e.currentTarget.checked,
-                    'cm-post-type':3            //0 is for new category, 1 is to update activity, 2 is for title, 3 is for winner
-                },
-            }).done(function (response) {
-                if (response.data.success === 'success') {
-                    toastr.success(response.data.message);
-                } else {
-                    toastr.error(response.data.message);
-                }
-            }).always(function (response, s, r) {
-            });
-        });
-    }
-
-    const codeInputWatch = function () {
-        $('.cm-code-title').off('change');
-        $('.cm-code-title').on('change', function(e){
-            catId = e.currentTarget.id;
-
-            let promise = $.ajax({
-                url: $cTable.data('loader'),
-                type: 'POST',
-                data: {
-                    'cm-code-id':catId.split('-')[2],
-                    'cm-code-title':e.currentTarget.value,
-                    'cm-post-type':2            //0 is for new category, 1 is to update, 2 is for title
-                },
-            }).done(function (response) {
-                if (response.data.success === 'success') {
-                    toastr.success(response.data.message);
-                } else {
-                    toastr.error(response.data.message);
-                }
-            }).always(function (response, s, r) {
-            });
-        });
-    }
-
-    const codeMessageWatch = function () {
-        $('.cm-code-message').off('change');
-        $('.cm-code-message').on('change', function(e){
-            catId = e.currentTarget.id;
-
-            let promise = $.ajax({
-                url: $cTable.data('loader'),
-                type: 'POST',
-                data: {
-                    'cm-code-id':catId.split('-')[2],
-                    'cm-code-message':e.currentTarget.value,
-                    'cm-post-type':4            //0 is for new category, 1 is to update, 2 is for title, 3 is for winner and 4 is for title
-                },
-            }).done(function (response) {
-                if (response.data.success === 'success') {
-                    toastr.success(response.data.message);
-                } else {
-                    toastr.error(response.data.message);
-                }
-            }).always(function (response, s, r) {
-            });
-        });
-    }
-
-    const codeExpirationWatch = function () {
-        $('.cm-code-expiration').off('change');
-        $('.cm-code-expiration').on('change', function(e){
-            catId = e.currentTarget.id;
-
-            let promise = $.ajax({
-                url: $cTable.data('loader'),
-                type: 'POST',
-                data: {
-                    'cm-code-id':catId.split('-')[2],
-                    'cm-code-expiration':e.currentTarget.value,
-                    'cm-post-type':5            //0 is for new category, 1 is to update, 2 is for title, 3 is for winner, 4 is for title and 5 is for date
-                },
-            }).done(function (response) {
-                if (response.data.success === 'success') {
-                    toastr.success(response.data.message);
-                } else {
-                    toastr.error(response.data.message);
-                }
-            }).always(function (response, s, r) {
-            });
-        });
-    }
-
-    const handleCodeForm = function() {
-        $cForm.validate({
-            focusInvalid: false,
-            rules: {},
-            message: {},
-
-            submitHandler: function (f, e) {
-                e.preventDefault();
-                let validator = this;
-                let promise = $.ajax({
-                    url: $cForm.prop('action'),
-                    type: 'post',
-                    data: $cForm.serializeObject(),
-                }).done(function (response) {
-                    if (response.data.success === 'success') {
-                        toastr.success(response.data.message);
-                        grabCodes();
-                    } else {
-                        toastr.error(response.data.message);
-                    }
-                }).fail(function () {
-                    toastr.error('Unknown Error');
-                }).always(function () {
-                    $cForm.children('input').val('');
-                });
+    const updateCode = function (e) {
+        codeId = e.currentTarget.id.split('-')[2];
+        $.post(CM_AJAX_URL, {
+            action: "cm_update_code",
+            code: {
+                'id': codeId,
+                'code': $('#code-title-' + codeId).val(),
+                'message': $('#code-message-' + codeId).val(),
+                'active': $('#code-active-' + codeId).is(':checked'),
+                'winner': $('#code-winner-' + codeId).is(':checked'),
+                'expiration': $('#code-expiration-' + codeId).val()
+            }
+        }, function (response) {
+            if (response.status === 'success') {
+                toastr.success(response.message);
+            } else {
+                toastr.error(response.message);
             }
         });
     }
 
-    const handleDocumentForm = function() {
-        $dFile.on('change', function(e) {
+    const deleteCode = function (e) {
+        $.post(CM_AJAX_URL, {
+            action: "cm_delete_code",
+            code: e.currentTarget.id.split('-')[2]
+        }, function(response) {
+            if (response.status === 'success') {
+                toastr.success(response.message);
+                grabCodes();
+            } else {
+                toastr.error(response.message);
+            }
+        })
+    }
+
+    const handleCodeForm = function (e) {
+        e.preventDefault();
+
+        $.post(CM_AJAX_URL, {
+            action: "cm_new_code",
+            code: $cForm.serializeObject()
+        }, function (response) {
+            if (response.status === 'success') {
+                toastr.success(response.message);
+                grabCodes();
+            } else {
+                toastr.error(response.message);
+            }
+
+            $cForm.children().val('');       //reset form
+        });
+    }
+
+    const handleDocumentForm = function () {
+        $dFile.on('change', async function (e) {
             if (this.files) {
                 var myFile = this.files[0];
                 var reader = new FileReader();
 
-                reader.addEventListener('load', function(e){
+                reader.addEventListener('load', function (e) {
                     let csvData = e.target.result;
-                    //console.log(csvData);
                     let data = csvData.split('\n');
-                    $.each(data, function(key, value) {
+                    $.each(data, function (key, value) {
                         //0 key is file banner
                         if (key > 0) {
                             let vars = value.split(',');
                             //upload code
-                            let promise = $.ajax({
-                                url: $cTable.data('loader'),
-                                type: 'POST',
-                                data: {
+                            $.post(CM_AJAX_URL, {
+                                action: "cm_new_code",
+                                code: {
                                     'cm-code': vars[0],
-                                    'cm-code-message': vars[1],
-                                    'cm-code-active': parseInt(vars[2]),
-                                    'cm-code-winner': parseInt(vars[3]),
-                                    'cm-code-expiration': vars[4],
-                                    'cm-post-type':0            //0 is for new code, 1 is to update, 2 is for title, 3 is for winner and 4 is for title
-                                },
-                            }).done(function (response) {
-                                if (response.data.success === 'success') {
-                                    toastr.success(response.data.message);
-                                } else {
-                                    toastr.error(response.data.message);
+                                    'message': vars[1],
+                                    'active': parseInt(vars[2]),
+                                    'winner': parseInt(vars[3]),
+                                    'expiration': vars[4]
                                 }
-                            }).always(function (response, s, r) {
+                            }, function (response) {
+                                if (response.status === 'success') {
+                                } else {
+                                    toastr.error(response.message);
+                                }
                             });
                         }
                     });
@@ -247,11 +154,14 @@
                 reader.readAsText(myFile);
             }
             $dForm.children('input').val('');
-            grabCodes();
+            toastr.success("Codes Imported!");
+
+            //required, otherwise new codes don't appear
+            setTimeout(grabCodes, 5000);
         });
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         pageInit();
     });
 
@@ -271,7 +181,7 @@
             }
 
             if (objectData[this.name] != null) {
-                if (! objectData[this.name].push) {
+                if (!objectData[this.name].push) {
                     objectData[this.name] = [objectData[this.name]];
                 }
 

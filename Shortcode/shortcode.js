@@ -42,7 +42,7 @@
                             console.log(response.data.content.id);
                             console.log(response.data.content.active);
 
-                            expireCode(response.data.content.id);
+                            //expireCode(response.data.content.id);
                         }
                         myPopup.show();
                     } else {

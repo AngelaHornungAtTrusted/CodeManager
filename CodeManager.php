@@ -9,8 +9,12 @@
  * Prefix: cm
  */
 
+//load classes & configs
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'CodeManagerConfig.php');
+require_once(CM_ROOT_DIR_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
+require_once(CM_UTIL_DIR_PATH . DIRECTORY_SEPARATOR . 'cm-ajax.php');
+
 /* variables & objects */
-require_once plugin_dir_path(__FILE__) . 'vendor/autoload.php';
 use Util\DbTableManager;
 
 /* Plugin Activation & Installation Management Hooks */
@@ -22,6 +26,12 @@ add_action('admin_menu', 'cm_menu');
 add_action('admin_post_dp_export_action', 'cm_export_data');
 add_action('admin_enqueue_scripts', 'cm_enqueue_admin_scripts');
 add_action('admin_footer', 'cm_export_button');
+
+/* Ajax Actions */
+add_action('wp_ajax_cm_new_code', 'wp_ajax_cm_new_code');
+add_action('wp_ajax_cm_update_code', 'wp_ajax_cm_update_code');
+add_action('wp_ajax_cm_get_codes', 'wp_ajax_cm_get_codes');
+add_action('wp_ajax_cm_delete_code', 'wp_ajax_cm_delete_code');
 
 function cm_activate(): void {
 	try{

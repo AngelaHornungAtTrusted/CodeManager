@@ -163,6 +163,18 @@ class DbTableManager {
             die();
         }
 	}
+
+    public function deleteCode($codeId): void {
+        try{
+            $this->dpdb->delete(
+                'cm_codes',
+                array('id' => $codeId)
+            );
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            die();
+        }
+    }
 }
 
 ?>
