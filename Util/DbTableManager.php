@@ -13,7 +13,7 @@ class DbTableManager {
 	public function initTables(): void {
 		$charset_collate = $this->dpdb->get_charset_collate();
 
-		$codeTable = "CREATE TABLE cm_codes (
+		$codeTable = "CREATE TABLE " . CM_TABLE_CODES . " (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         code varchar(255) DEFAULT '' NOT NULL,
         message varchar(255) DEFAULT '' NOT NULL,
@@ -23,12 +23,30 @@ class DbTableManager {
         create_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
         update_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
         PRIMARY KEY  (id)
+        ) $charset_collate;" . "CREATE TABLE " . CM_TABLE_SETTINGS . " (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        name varchar(255) DEFAULT '' NOT NULL,
+        active tinyint(1) DEFAULT '0',
+        create_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        update_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        PRIMARY KEY  (id)
         ) $charset_collate;";
 
 		//require once is for dbDelta
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($codeTable);
 	}
+
+    public function initSettings(): void {
+        foreach (CM_SETTINGS_DATA as $setting) {
+            $this->dpdb->insert('cm_settings', array(
+                'name' => $setting,
+                'active' => CM_CODE_INACTIVE,
+                'create_date' => gmdate('Y-m-d H:i:s'),
+                'update_date' => gmdate('Y-m-d H:i:s')
+            ));
+        }
+    }
 
 	public function exportTables(): void {
 		$tables_to_export = array(
@@ -75,106 +93,6 @@ class DbTableManager {
 
 		$wpdb->query( "DROP TABLE IF EXISTS cm_codes" );
 	}
-
-	function insertCode($code, $message = null, $active = null, $winner = null, $exp = null): void {
-
-		$this->dpdb->insert(
-			'cm_codes',
-			array(
-				'code'        => $code,
-				'message'     => ($message === "") ? 'Loser' : $message,
-				'active'      => ($active === "") ? 1 : $active,
-				'winner'      => ($winner === "") ? 0 : $winner,
-				'expiration'  => ($exp === "") ? gmdate('Y-m-d H:i:s', mktime(0,0,0,date("m", strtotime("+1 month")),1,date("Y"))) : $exp,
-                //'expiration'  => gmdate('Y-m-d H:i:s', mktime(0,0,0,date("m", strtotime("+1 month")),1,date("Y"))),
-				'create_date' => gmdate( 'Y-m-d H:i:s' ),
-				'update_date' => gmdate( 'Y-m-d H:i:s' )
-			)
-		);
-	}
-
-	function getCode($code = false) {
-		if (!$code) {
-			//grab all
-			return $this->dpdb->get_results("SELECT * FROM cm_codes");
-		} else {
-			//grab specific
-			return $this->dpdb->get_row("SELECT * FROM cm_codes WHERE code = '$code' AND active = 1");
-		}
-	}
-
-	//no deleting codes, just changing active status
-	function updateCodeStatus($codeId, $checked): void {
-		$this->dpdb->update(
-			'cm_codes',
-			array(
-				'active'      => ($checked === "true" ? 1 : 0),
-				'update_date' => gmdate( 'Y-m-d H:i:s' )
-			),
-			array('id' => $codeId)
-		);
-	}
-
-	function updateWinnerStatus($codeId, $checked): void {
-		$this->dpdb->update(
-			'cm_codes',
-			array(
-				'winner'      => ($checked === "true" ? 1 : 0),
-				'update_date' => gmdate( 'Y-m-d H:i:s' )
-			),
-			array('id' => $codeId)
-		);
-	}
-
-	public function updateCode($codeId, $code): void {
-		$this->dpdb->update(
-			'cm_codes',
-			array(
-				'code'        => $code,
-				'update_date' => gmdate( 'Y-m-d H:i:s' )
-			),
-			array('id' => $codeId)
-		);
-	}
-
-	public function updateCodeMessage($codeId, $message): void {
-		$this->dpdb->update(
-			'cm_codes',
-			array(
-				'message'        => $message,
-				'update_date' => gmdate( 'Y-m-d H:i:s' )
-			),
-			array('id' => $codeId)
-		);
-	}
-
-	public function updateCodeExpiration($codeId, $exp = null): void {
-        try {
-            $this->dpdb->update(
-                'cm_codes',
-                array(
-                    'expiration'  => ($exp != null) ? gmdate('Y-m-d H:i:s',strtotime($exp)) : gmdate('Y-m-d'),
-                    'update_date' => gmdate( 'Y-m-d H:i:s' )
-                ),
-                array('id' => $codeId)
-            );
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            die();
-        }
-	}
-
-    public function deleteCode($codeId): void {
-        try{
-            $this->dpdb->delete(
-                'cm_codes',
-                array('id' => $codeId)
-            );
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            die();
-        }
-    }
 }
 
 ?>

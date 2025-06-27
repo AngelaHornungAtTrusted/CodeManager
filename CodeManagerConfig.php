@@ -26,8 +26,12 @@ define('CM_DB_PREFIX', 'cm_');
 
 //primary tables
 define('CM_TABLE_CODES', CM_DB_PREFIX . 'codes');
+define('CM_TABLE_SETTINGS', CM_DB_PREFIX . 'settings');
 
 //data constants
 define('CM_CODE_ACTIVE', 1);
 define('CM_CODE_INACTIVE', 0);
 define('CM_DEFAULT_MESSAGE', 'Default Message');
+define('CM_AUTOINACTIVE_SETTINGS_NAME', 'autoinactive');
+define('CM_AUTODELETE_SETTINGS_NAME', 'autodelete');
+define('CM_SETTINGS_DATA', [CM_AUTOINACTIVE_SETTINGS_NAME, CM_AUTODELETE_SETTINGS_NAME]);

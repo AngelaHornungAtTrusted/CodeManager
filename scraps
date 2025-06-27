@@ -1,0 +1,61 @@
+
+/*
+ * //export button
+function cm_export_button(): void
+{
+    $screen = get_current_screen();
+    if ($screen->id !== 'plugins') {
+        return;
+    }
+    ?>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $('#deactivate-docport').each(function () {
+                //Find deactivate button
+                var targetButton = $('#deactivate-docport');
+
+                if (targetButton) {
+                    var pluginRow = $(this).closest('tr');
+                    var pluginSlug = pluginRow.find('.plugin-title strong').text().toLowerCase().replace(/ /g, '-'); // Get plugin slug
+
+                    var buttonHTML = '<a class="" style="margin-left: 5px;" data-plugin-slug="' + pluginSlug + '" href="' + my_plugin_vars.export_url + '">Export Tables</a>';
+                    targetButton.after(buttonHTML);
+                }
+            });
+        });
+    </script>
+    <?php
+}
+ */
+ /*     //wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"');
+    //wp_enqueue_script('jquery.validate', '//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"');
+
+    //wp_enqueue_script('jquery.validate', plugin_dir_url( __FILE__ ) . 'Assets/validate/jquery.validate.min.js"');
+    //wp_enqueue_script('jquery.validate', plugin_dir_url( __FILE__ ) . 'Assets/validate/additional-methods.min.js"');
+
+	//plugins page specific javascript
+    /*if ('plugins.php' === $hook) {
+	    //wp_enqueue_style('my-plugin-admin-style', plugin_dir_url(__FILE__) . 'css/admin.css');
+	    wp_enqueue_script('my-plugin-admin-script', plugin_dir_url(__FILE__) . '', array('jquery'), '1.0', true);
+	    wp_localize_script('my-plugin-admin-script', 'my_plugin_vars', array(
+		    'nonce' => wp_create_nonce('my_plugin_custom_action'),
+		    'action' => 'my_plugin_custom_action',
+		    'export_url' => admin_url('admin-post.php?action=cm_export_action') // Add the URL here
+	    ));
+	}
+*/
+
+//exports table data, called by export button
+function cm_export_action(): void
+{
+    try {
+        global $wpdb;
+
+        $dpTableManager = new DbTableManager($wpdb);
+        $dpTableManager->exportTables();
+        exit;
+    } catch (\Exception $e) {
+        //todo implement cleaner and more proper error reporting
+        var_dump($e->getMessage());
+    }
+}

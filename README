@@ -17,6 +17,5 @@ Ability for users to be able to try their codes and see popup containing result
 Developer Note: I will be adding more to this later as time allows in my work schedule
 
 Future Features
-1.) Deleting codes (extra property that'll tell system whether or not to load/read code)
-2.) Proper ajax calls to server (back end for performance and security)
-3.) Styling shortcode
+1.) Different code groups and associated shortcodes to manage multiple lotteries with different settings
+2.) Styling choices on lottery shortcodes
