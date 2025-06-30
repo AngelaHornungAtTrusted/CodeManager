@@ -19,11 +19,9 @@
                  data-bs-parent="#administrationAccordion">
                 <div class="accordion-body">
                     <h5>Code Settings</h5>
-                    <input type="checkbox" id="cm-autoinactive">
-                    <label for="cm-autoinactive">Automatically Deactivate Codes Upon Redemption</label>
-                    <br>
-                    <input type="checkbox" id="cm-autodelete">
-                    <label for="cm-autodelete">Automatically Delete Codes Upon Their Expiration Date</label>
+                    <div class="row" id="settings-panel">
+
+                    </div>
                 </div>
             </div>
         </div>

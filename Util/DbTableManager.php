@@ -27,6 +27,7 @@ class DbTableManager {
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         name varchar(255) DEFAULT '' NOT NULL,
         active tinyint(1) DEFAULT '0',
+        description varchar(255) DEFAULT '' NOT NULL,
         create_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
         update_date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
         PRIMARY KEY  (id)
@@ -38,10 +39,23 @@ class DbTableManager {
 	}
 
     public function initSettings(): void {
+        //codes table example code
+        $this->dpdb->insert('cm_codes', array(
+            'code' => CM_DEFAULT_EXAMPLE_CODE,
+            'message' => CM_DEFAULT_MESSAGE,
+            'active' => CM_CODE_ACTIVE,
+            'winner' => CM_CODE_ACTIVE,
+            'expiration' => gmdate('Y-m-d H:i:s', mktime(0,0,0,date("m", strtotime("+1 month")),1,date("Y"))),
+            'create_date' => gmdate('Y-m-d H:i:s'),
+            'update_date' => gmdate('Y-m-d H:i:s'),
+        ));
+
+        //settings table
         foreach (CM_SETTINGS_DATA as $setting) {
             $this->dpdb->insert('cm_settings', array(
-                'name' => $setting,
+                'name' => $setting['name'],
                 'active' => CM_CODE_INACTIVE,
+                'description' => $setting['description'],
                 'create_date' => gmdate('Y-m-d H:i:s'),
                 'update_date' => gmdate('Y-m-d H:i:s')
             ));

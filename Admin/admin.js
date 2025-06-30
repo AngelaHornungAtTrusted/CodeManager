@@ -1,6 +1,6 @@
 (function ($) {
 
-    let $cForm, $dForm, $cTable, $dTable, $dFile;
+    let $cForm, $dForm, $cTable, $dTable, $dFile, $sPanel;
     let checked, wChecked, codeId;
 
     const pageInit = function () {
@@ -12,13 +12,40 @@
         $cTable = $('#cm-code-table');
         $dTable = $('#dp-doc-table');
         $dFile = $('#dp-doc-upload');
+        $sPanel = $('#settings-panel');
 
         //init method
-        grabCodes();
+        grabSettings();
 
         //call form handlers
         $('#cm-code-submit').on('click', handleCodeForm);
         handleDocumentForm();
+    }
+
+    const grabSettings = function () {
+        $.get(CM_AJAX_URL, {
+                action: "cm_get_settings",
+            }, function (response) {
+                if (response.status === 'success') {
+                    toastr.success(response.message);
+                    settingsFormInit(response.data);
+                } else {
+                    toastr.error(response.message);
+                }
+            }
+        );
+    }
+
+    const settingsFormInit = function (data) {
+        $.each(data, function(key, setting){
+            checked = setting.active === '1' ? 'checked' : '';
+            $sPanel.append('<label for="' + setting.name + '">' + setting.description + '' +
+                '<input type="checkbox" id="' + setting.name + '" value="' + setting.active + '" ' + checked + '></label>');
+
+            $('#' + setting.name).on('click', updateSettings);
+        });
+
+        grabCodes();
     }
 
     const grabCodes = function () {
@@ -53,11 +80,11 @@
         });
 
         //call events
-        initPageActions();
+        initTableActions();
     }
 
-    const initPageActions = function () {
-        //set up triggers
+    const initTableActions = function () {
+        //set up table triggers
         $('.cm-code-title').off('change').on('change', updateCode);
         $('.cm-code-checkbox').off('click').on('click', updateCode);
         $('.cm-code-winner-checkbox').off('click').on('click', updateCode);
@@ -98,7 +125,7 @@
             } else {
                 toastr.error(response.message);
             }
-        })
+        });
     }
 
     const handleCodeForm = function (e) {
@@ -158,6 +185,22 @@
 
             //required, otherwise new codes don't appear
             setTimeout(grabCodes, 5000);
+        });
+    }
+
+    const updateSettings = function (e) {
+        console.log('Update Settings!');
+
+        $.post(CM_AJAX_URL, {
+            action: "cm_post_settings",
+            setting: e.currentTarget.id,
+            checked: e.currentTarget.checked
+        }, function(response) {
+            if (response.status === 'success') {
+                toastr.success(response.message);
+            } else {
+                toastr.error(response.message);
+            }
         });
     }
 

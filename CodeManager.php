@@ -35,6 +35,8 @@ add_action('wp_ajax_cm_update_code', 'wp_ajax_cm_update_code');
 add_action('wp_ajax_cm_get_codes', 'wp_ajax_cm_get_codes');
 add_action('wp_ajax_cm_delete_code', 'wp_ajax_cm_delete_code');
 add_action('wp_ajax_cm_code_exists', 'wp_ajax_cm_code_exists');
+add_action('wp_ajax_cm_get_settings', 'wp_ajax_cm_get_settings');
+add_action('wp_ajax_cm_post_settings', 'wp_ajax_cm_post_settings');
 
 function cm_activate(): void
 {
