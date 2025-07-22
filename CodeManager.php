@@ -88,6 +88,7 @@ function cmanager_shortcode($atts = [], $content = null): void
     <div class="wrap">
         <?php include(plugin_dir_path(__FILE__) . 'Shortcode/shortcode.php'); ?>
         <?php wp_enqueue_script('admin-js', CM_SHORTCODE_URL . '/shortcode.js"', array('jquery')); ?>
+        <?php wp_enqueue_script('popup-js', CM_ASSETS_URL . '/popup/popup.js"', array('jquery')); ?>
     </div>
     <?php
 }
